@@ -11,5 +11,12 @@
 
 .ui.items > .item > .content > .header {
   display: block;
-  cursor: pointer;  
+  cursor: pointer;
+}
+
+.ui.items > .item > .meta {
+  width: 88px;
+  color: rgba(0,0,0,0.4);
+  margin-top: 0;
+  margin_bottom: 16px;
 }
