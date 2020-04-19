@@ -1,17 +1,49 @@
+const Editor = {
+  props:[
+    'entityObject'
+  ],
+  data(){
+    return {
+      entity: this.entityObject
+    }
+  },
+  template: `
+    <div class="ui form">
+      <div class="field">
+        <textarea
+          rows='5'
+          placeholder="写点东西吧。。。"
+          v-model="entity.body">
+        </textarea>
+      </div>
+    </div>
+  `
+}
+
 const Note = {
   props:[
     'entityObject'
   ],
   data() {
     return {
-      entity:this.entityObject
+      entity:this.entityObject,
+      open:false
     }
+  },
+  components: {
+    'editor': Editor
   },
   template: `
     <div class="item">
       <div class="content">
-        <div class="header">
+        <div class="header" v-on:click="open=!open">
           {{ entity.body || "新建笔记"}}
+        </div>
+        <div class='extra'>
+          <editor
+          v-bind:entity-object='entity'
+          v-if="open">
+          </editor>
         </div>
       </div>
     </div>
