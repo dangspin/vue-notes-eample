@@ -7,13 +7,19 @@ const Editor = {
       entity: this.entityObject
     }
   },
+  methods:{
+    update() {
+      this.$emit('update')
+    }
+  },
   template: `
     <div class="ui form">
       <div class="field">
         <textarea
           rows='5'
           placeholder="写点东西吧。。。"
-          v-model="entity.body">
+          v-model="entity.body"
+          v-on:input='update'>
         </textarea>
       </div>
     </div>
@@ -30,6 +36,20 @@ const Note = {
       open:false
     }
   },
+  computed: {
+    header() {
+      return _.truncate(this.entity.body, {length: 30})
+    }
+  },
+  methods: {
+    save() {
+      loadCollection('notes')
+        .then((collection) => {
+          collection.update(this.entity)
+          db.saveDatabase()
+        })
+    }
+  },
   components: {
     'editor': Editor
   },
@@ -37,12 +57,13 @@ const Note = {
     <div class="item">
       <div class="content">
         <div class="header" v-on:click="open=!open">
-          {{ entity.body || "新建笔记"}}
+          {{ header || "新建笔记"}}
         </div>
         <div class='extra'>
           <editor
           v-bind:entity-object='entity'
-          v-if="open">
+          v-if="open"
+          v-on:update='save'>
           </editor>
         </div>
       </div>
