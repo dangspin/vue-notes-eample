@@ -42,6 +42,9 @@ const Note = {
     },
     updated() {
       return moment(this.entity.meta.updated).fromNow()
+    },
+    words() {
+      return this.entity.body.trim().length
     }
   },
   methods: {
@@ -51,6 +54,9 @@ const Note = {
           collection.update(this.entity)
           db.saveDatabase()
         })
+    },
+    destroy() {
+      this.$emit('destroy', this.entity.$loki)
     }
   },
   components: {
@@ -71,6 +77,11 @@ const Note = {
           v-if="open"
           v-on:update='save'>
           </editor>
+          {{ words + '字' }}
+          <i class='ui right floated trash outline icon'
+          v-if="open"
+          v-on:click='destroy'>
+          </i>
         </div>
       </div>
     </div>
@@ -104,6 +115,19 @@ const Notes = {
           db.saveDatabase();
           this.entities.unshift(entity)
         })
+    },
+    destroy(id) {
+      const _entities = this.entities.filter((entity) => {
+        return entity.$loki !== id
+      })
+
+      this.entities = _entities
+
+      loadCollection('notes')
+        .then((collection) => {
+          collection.remove({'$loki': id})
+          db.saveDatabase()
+        })
     }
   },
   components: {
@@ -123,7 +147,8 @@ const Notes = {
         <note
         v-for="entity in entities"
         v-bind:entityObject='entity'
-        v-bind:key='entity.$loki'>
+        v-bind:key='entity.$loki'
+        v-on:destroy="destroy">
         </note>
       </div>
     </div>
