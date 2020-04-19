@@ -10,7 +10,9 @@ const Note = {
   template: `
     <div class="item">
       <div class="content">
-        <div class="header">{{ entity.body}}</div>
+        <div class="header">
+          {{ entity.body || "新建笔记"}}
+        </div>
       </div>
     </div>
   `
@@ -33,6 +35,18 @@ const Notes = {
         console.log(this.entities);
       })
   },
+  methods: {
+    create() {
+      loadCollection('notes')
+        .then((collection) => {
+          const entity = collection.insert({
+            body: ''
+          })
+          db.saveDatabase();
+          this.entities.unshift(entity)
+        })
+    }
+  },
   components: {
     'note': Note
   },
@@ -42,7 +56,10 @@ const Notes = {
         <i class="paw icon"></i>
         Charlie Notes App _ Vue.js
       </h4>
-      <a class="ui right floated basic violet button">添加笔记</a>
+      <a class="ui right floated basic violet button"
+        v-on:click="create">
+        添加笔记
+      </a>
       <div class="ui divided items">
         <note
         v-for="entity in entities"
